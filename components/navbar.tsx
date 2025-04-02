@@ -5,13 +5,14 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ModeToggle } from "@/components/mode-toggle"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { useIsMobile } from "@/hooks/use-mobile"
 import Logo from "@/components/logo"
 
 export default function Navbar() {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,9 +31,8 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled ? "bg-background/80 backdrop-blur-md" : "bg-transparent"
-      }`}
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled ? "bg-background/80 backdrop-blur-md" : "bg-transparent"
+        }`}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
@@ -44,52 +44,48 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === link.href ? "text-foreground" : "text-muted-foreground"
-              }`}
+              className={`text-sm font-medium transition-colors hover:text-primary ${pathname === link.href ? "text-foreground" : "text-muted-foreground"
+                }`}
             >
               {link.label}
             </Link>
           ))}
         </nav>
-
-        <div className="flex items-center gap-4">
-          <ModeToggle />
-          <Sheet>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Abrir menú</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex h-full flex-col">
-                <div className="flex items-center justify-between border-b py-4">
-                  <Logo className="h-6 w-auto" />
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <X className="h-5 w-5" />
-                      <span className="sr-only">Cerrar menú</span>
-                    </Button>
-                  </SheetTrigger>
-                </div>
-                <nav className="flex flex-col gap-4 py-8">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className={`text-lg font-medium transition-colors hover:text-primary ${
-                        pathname === link.href ? "text-foreground" : "text-muted-foreground"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+        {
+          isMobile ?
+            <div className="flex items-center gap-4">
+              <Sheet>
+                <SheetTrigger asChild className="md:hidden">
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Abrir menú</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right">
+                  <div className="flex h-full flex-col">
+                    <div className="flex items-center justify-between border-b py-4">
+                      <SheetTitle>
+                        <Logo className="h-6 w-auto" />
+                      </SheetTitle>
+                    </div>
+                    <nav className="flex flex-col gap-4 py-8">
+                      {navLinks.map((link) => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          className={`text-lg font-medium transition-colors hover:text-primary ${pathname === link.href ? "text-foreground" : "text-muted-foreground"
+                            }`}
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </nav>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+            : null
+        }
       </div>
     </header>
   )
